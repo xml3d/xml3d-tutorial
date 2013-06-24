@@ -1,0 +1,9 @@
+.example {
+    width: 320px;
+    height: 240px;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}

@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Style -->
+  <link rel="stylesheet" type="text/css" media="all" href="../../style/tutorial.css"/>
+  <link rel="stylesheet" type="text/css" media="all" href="../../style/jquery-ui.css"/>
+  <!-- Scripts -->
+  <script type="text/javascript" src="../../script/xml3d.js"></script>
+  <script type="text/javascript" src="../../script/jquery-1.8.1.min.js"></script>
+  <script type="text/javascript" src="../../script/jquery-ui-1.8.23.min.js"></script>
+  <script type="text/javascript" src="../../script/tutorial.js"></script>
+  <script type="text/javascript" src="../../script/xml3d-camera.js"></script>
+  <title>XML3D Examples</title>
+</head>
+<body>
+<div id="overall">
+  <div id="content">
+    <h1>The Basics of XML3D</h1>
+
+    <h2>Shading the teapot</h2>
+
+    <p>
+        You might have noticed: our teapot is actually just a red silhouette.
+        We can expect more from 3D graphics. So let's change the shading of our 3D object.
+        XML3D provides the <tag>shader</tag> element to define shaders.
+        However, as you will see, we define <tag>shader</tag> not quite like other XML3D nodes. Here an example shader:
+    </p>
+
+    <div class="exampleCode" >
+        <shader id="orange" script="urn:xml3d:shader:matte">
+
+        </shader>
+    </div>
+    <p>
+        We specify a <i>document id</i> for our <tag>shader</tag> (just as we do with other HTML elements) and a
+        script which specifies the behaviour or type of the shader.
+        "urn:xml3d:shader:matte" is a predefined behavior that simply fills the element with the specified color.
+    </p>
+
+    <p>
+        But wait, how do we specify the color for our new "orange" matte shader, anyway?
+    </p>
+
+    <p>
+        We don't use any more attributes to further configure our <tag>shader</tag>.
+        Instead, we place generic <b>ValueElements</b>, such as <tag>float3</tag> inside of <tag>shader</tag>:
+    </p>
+
+    <div class="exampleCode" >
+        <shader id="orange" script="urn:xml3d:shader:matte">
+          <float3 name="diffuseColor" >1 0.5 0</float3>
+        </shader>
+    </div>
+
+    <p>
+        We added a ValueElement of type <i>float3</i> (reads: 3 floating point numbers) with name diffuseColor
+        and values 1, 0.5, and 0.
+        The <tag>shader</tag> will evaluate the input provided by it's child ValueElements to shade as requested.
+        Each float value is used as a color component of an RGB color.
+    </p>
+
+    <p>
+        The <tag>shader</tag> element is a generic <b>DataContainer</b>, just like several other XML3D elements.
+        To understand why we choose this rather elaborate way of configuring your element, hava a look at Generic Data in XML3D.
+    </p>
+
+    <p>
+        Now we have our new shader! All that remains is connecting it with our <tag>mesh</tag>. We do this using the shader attribute of the <tag>group</tag>:
+    </p>
+
+    <div class="exampleCode live">
+        <xml3d class="example" >
+          ====MARK
+          <shader id="orange" script="urn:xml3d:shader:matte">
+            <float3 name="diffuseColor" >1 0.5 0</float3>
+          </shader>
+          ====
+          <view position="0 0 100" ></view>
+          ====MARK
+          <group shader="#orange" style="transform: translate3d(0px,-20px, 0px)" >
+          ====
+            <mesh src="resource/teapot.xml#mesh" ></mesh>
+          </group>
+        </xml3d>
+    </div>
+
+    <p>
+        Note the <b>#</b> sign before orange: This is the syntax to refer an element of the same document via document id.
+        Note that XML3D also allows us to refer shaders from external files e.g. <code>shader="shader.xml#wood"</code>.
+    </p>
+
+    <p>So now we finally got our newly shaded, orange teapot. But wait... that's just a different silhouette!
+        We wanted to get some decent shading with a 3D feel to it.</p>
+
+    <p>For that we need a different kind of shader: a phong shader.</p>
+
+    <div class="exampleCode live" >
+        <xml3d class="example" >
+          ====MARK
+          <shader id="orangePhong" script="urn:xml3d:shader:phong">
+          ====
+            <float3 name="diffuseColor" >1 0.5 0</float3>
+          </shader>
+
+          <view position="0 0 100" ></view>
+          ====MARK
+          <group shader="#orangePhong" style="transform: translate3d(0px, -20px, 0px)" >
+          ====
+            <mesh src="resource/teapot.xml#mesh" ></mesh>
+          </group>
+        </xml3d>
+    </div>
+
+    <p>
+        It's another silhouette! (Please bear with us)
+    </p>
+
+    <p>
+        What is missing this time around: the <i>light source</i>.
+        Phong shading will only look interesting with a light source places somewhere inside the scene.
+        We can, in fact, configure our phong shader to have some ambient intensity, that will make the defined
+        diffuseColor visible even without any light source.
+        However, this will just result in differently colored silhouette:
+    </p>
+
+    <div class="exampleCode live" >
+        <xml3d class="example" >
+          <shader id="orangePhong" script="urn:xml3d:shader:phong">
+            <float3 name="diffuseColor" >1 0.5 0</float3>
+        ====MARK
+            <float name="ambientIntensity" >0.5</float>
+        ====
+          </shader>
+
+          <view position="0 0 100" ></view>
+          <group shader="#orangePhong" style="transform: translate3d(0px, -20px, 0px)" >
+            <mesh src="resource/teapot.xml#mesh" ></mesh>
+          </group>
+        </xml3d>
+    </div>
+
+    <p>So there is no way around, we have to add a light source.
+    To add a light source, we need to define two elements: a <tag>lightshader</tag> and a <tag>light</tag>,
+    which connects to the lightshader.
+    There are different types of <tag>lightshaders</tag>. For now, let's only consider a directional light source:
+    </p>
+
+    <div class="exampleCode" >
+        <lightshader id="light1" script="urn:xml3d:lightshader:directional" >
+          <float3 name="intensity" >1 1 1</float3>
+        </lightshader>
+    </div>
+
+    <p>
+    The <tag>lightshader</tag> is similar to <tag>shader</tag> in that is also accepts a script
+        (here referring to a urn) and is itself a generic DataContainer. For directional lightsources, we can specify
+        an intensity value with a <tag>float3</tag> (each float is the intensity of a channel from an RGB color).
+    </p>
+    <p>
+    Now we add the <tag>light</tag> element that will refer our new <tag>lightshader</tag>.
+    The final scene looks like this:
+    </p>
+
+    <div class="exampleCode live" >
+        <xml3d class="example" >
+          <shader id="orangePhong" script="urn:xml3d:shader:phong">
+            <float3 name="diffuseColor" >1 0.5 0</float3>
+            <float name="ambientIntensity" >0.5</float>
+          </shader>
+
+          ====MARK
+          <lightshader id="light1" script="urn:xml3d:lightshader:directional" >
+            <float3 name="intensity" >1 1 1</float3>
+          </lightshader>
+
+          <light shader="#light1" ></light>
+          ====
+
+          <view position="0 0 100" ></view>
+          <group shader="#orangePhong" style="transform: translate3d(0px,-20px,0px)" >
+            <mesh src="resource/teapot.json" ></mesh>
+          </group>
+        </xml3d>
+    </div>
+    <p>
+        And finally we get our nicely shaded teapot:
+    </p>
+
+    <p>
+        This almost concludes our tutorial about the basics of XML3D.
+    </p>
+    <p>
+        As a last step, how about you add the following script to your document:
+    </p>
+
+    <div class="exampleCode" >
+        <script src="http://www.xml3d.org/xml3d/script/tools/camera.js"></script>
+    </div>
+
+    <p>
+        This will allow you to rotate and scale the camera around the teapot by clicking and
+        dragging with the left or right mouse button over the visible 3D scene.
+    </p>
+
+    <p>
+        Now you can inspect your nicely shaded teapot from all angles!
+    </p>
+
+    <p>
+        Here the final document (don't forget to place the teapot.json in the same folder):
+    </p>
+
+
+    <div class="exampleCode live" >
+    ====ENCODE
+    &lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+    &lt;head&gt;
+      &lt;script src="../../script/xml3d.js"&gt;&lt;/script&gt;
+      &lt;script src="../../script/xml3d-camera.js"&gt;&lt;/script&gt;
+      &lt;link rel="stylesheet" type="text/css" media="all" href="../../style/example.css"/&gt;
+      &lt;title&gt;My very first XML3D teapot&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+    ====
+    <xml3d class="example" >
+      <!-- The surface shader of our teapot: -->
+      <shader id="orangePhong" script="urn:xml3d:shader:phong">
+        <float3 name="diffuseColor" >1 0.5 0</float3>
+        <float name="ambientIntensity" >0.5</float>
+      </shader>
+
+      <!-- Some light source in our scene -->
+      <lightshader id="light1" script="urn:xml3d:lightshader:directional" >
+        <float3 name="intensity" >1 1 1</float3>
+      </lightshader>
+      <light shader="#light1" ></light>
+
+      <!-- Our viewpoint from where we see the 3D content -->
+      <view position="0 0 100" ></view>
+
+      <!-- Teapot. The one and only. Also orange. -->
+      <group shader="#orangePhong" style="transform: translate3d(0px,-20px,0px)" >
+        <mesh src="resource/teapot.json" ></mesh>
+      </group>
+    </xml3d>
+    ====ENCODE
+    &lt;/body&gt;
+    &lt;/html&gt;
+    </div>
+
+
+
+
+
+
+
+  </div>
+</div>
+</body>
+</html>

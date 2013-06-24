@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Style -->
+  <link rel="stylesheet" type="text/css" media="all" href="../../style/tutorial.css"/>
+  <link rel="stylesheet" type="text/css" media="all" href="../../style/jquery-ui.css"/>
+  <!-- Scripts -->
+  <script type="text/javascript" src="../../script/xml3d.js"></script>
+  <script type="text/javascript" src="../../script/jquery-1.8.1.min.js"></script>
+  <script type="text/javascript" src="../../script/jquery-ui-1.8.23.min.js"></script>
+  <script type="text/javascript" src="../../script/tutorial.js"></script>
+  <script type="text/javascript" src="../../script/xml3d-camera.js"></script>
+  <title>XML3D Examples</title>
+</head>
+<body>
+<div id="overall">
+  <div id="content">
+    <h1>The Basics of XML3D</h1>
+
+    <h2>Introduction</h2>
+
+    <p>This is a tutorial that leads you through the basics of XML3D. What we will cover:</p>
+
+    <ul>
+        <li>3D geometry</li>
+        <li>Viewports</li>
+        <li>Transform Hierarchy</li>
+        <li>Surface appearance</li>
+        <li>Light sources</li>
+    </ul>
+
+    <p>Requirements of this tutorial</p>
+
+    <ul>
+        <li>Basic understanding of HTML, CSS and JavaScript</li>
+    </ul>
+
+    <h2>The General Idea</h2>
+
+    <p>XML3D is an extension to <b>HTML</b>. Just as you write HTML for <i>text and images</i> like so:</p>
+
+    <div class="exampleCode" >
+        <p>
+           This is some generic paragraph <span>with a twist</span>
+           <img src="yayColors.png" alt="and an image" />
+        </p>
+    </div>
+
+    <p>You can write XML3D for 3D content:</p>
+
+    <div class="exampleCode" >
+        <p>Following this paragraphs we will break the second dimension!</p>
+        <xml3d>
+           <mesh src="yayVertices.xml" ></mesh>
+        </xml3d>
+        <p>... did you see it?</p>
+    </div>
+
+    <p>Your 3D content is defined inside the <tag>xml3d</tag> element,
+        which defines the canvas through which the 3D scene is displayed. It behaved exactly like <tag>img</tag>
+        layout wise.</p>
+
+  </div>
+</div>
+</body>
+</html>

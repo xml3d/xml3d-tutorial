@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Style -->
+  <link rel="stylesheet" type="text/css" media="all" href="../../style/tutorial.css"/>
+  <link rel="stylesheet" type="text/css" media="all" href="../../style/jquery-ui.css"/>
+  <!-- Scripts -->
+  <script type="text/javascript" src="../../script/xml3d.js"></script>
+  <script type="text/javascript" src="../../script/jquery-1.8.1.min.js"></script>
+  <script type="text/javascript" src="../../script/jquery-ui-1.8.23.min.js"></script>
+  <script type="text/javascript" src="../../script/tutorial.js"></script>
+  <script type="text/javascript" src="../../script/xml3d-camera.js"></script>
+  <title>XML3D Examples</title>
+</head>
+<body>
+<div id="overall">
+  <div id="content">
+    <h1>The Basics of XML3D</h1>
+
+    <h2>Displaying our first mesh</h2>
+
+    <p>We have already established, that all our 3D content is placed inside an <tag>xml3d</tag> element, so let's start with that:</p>
+
+    <div class="exampleCode" >
+        ====ENCODE
+        &lt;!DOCTYPE html&gt;
+        &lt;html&gt;
+        &lt;head&gt;
+          &lt;script type="text/javascript" src="http://www.xml3d.org/xml3d/script/xml3d.js"&gt;&lt;/script&gt;
+          &lt;script type="text/javascript" src="http://www.xml3d.org/xml3d/script/tools/camera.js"&gt;&lt;/script&gt;
+          &lt;title&gt;My very first XML3D teapot&lt;/title&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+        ====
+            <xml3d class="example" >
+              <!-- Incoming 3D! -->
+            </xml3d>
+        ====ENCODE
+        &lt;/body&gt;
+        &lt;/html&gt;
+    </div>
+
+    <p>
+    To add some 3D geometry to our scene, we use the <tag>mesh</tag> element.
+    Just as with <tag>img</tag>, the <tag>mesh</tag> element links an external file containing the 3D geometry data.
+    Here is one of these files for the good ol' teapot: <a href="resource/teapot.json" >teapot.json</a>
+    </p>
+
+    <p>
+        Including the mesh is now fairly simple:
+    </p>
+
+
+    <div class="exampleCode live" >
+        <xml3d class="example" >
+            <mesh src="resource/teapot.json" ></mesh>
+        </xml3d>
+    </div>
+
+    <p>
+        ...That's not a teapot. There is just a red square on the upper half of the screen.
+    </p>
+
+    <p>
+        Here is, where 3D gets a bit complicated: The teapot is there,
+        it's just that its <b>position</b> relative to your viewpoint is rather badly chosen.</p>
+    </p>
+
+    <p><b>Why is that?</b></p>
+
+    <ul>
+        <li>the XML3D viewpoint by default is set at the origin of 3D space (x=y=z=0), looking at direction (0,0, -1), so in negative z direction.</li>
+        <li>most meshes tend to be places around the origin as well</li>
+    </ul>
+
+    <p>So consequently: our viewpoint is right next to the surface to the mesh.</p>
+
+    <p>Let's change the viewpoint to get some distance to the object.
+        XML3D provides the <tag>view</tag> element to define the viewpoint of the scene:</p>
+
+    <div class="exampleCode live" >
+      <xml3d class="example">
+        ====MARK
+        <view position="0 0 100" ></view>
+        ====
+        <mesh src="resource/teapot.xml#mesh" ></mesh>
+      </xml3d>
+    </div>
+
+    <p>Since our viewpoint looks into the direction (0,0,-1), we move along the z coordinate to get some distance,
+        thus the new position (0,0,100).</p>
+
+    <p>
+        Now we start to recognize our teapot, but it's still a bit high up, not quite inside the center.
+        We could now simply move the viewpoint up a bit again.
+        However, thanks to relativity, there is a second option: Let's move the mesh instead.
+    </p>
+
+    <p>
+        In order to move the mesh, we first have to wrap it inside a <tag>group</tag> element.
+        The group element can enclose multiple <tag>mesh</tag> and other <tag>group</tag> elements and transform all of it's content.
+    </p>
+
+    <p>
+        To declare the transformation, we simply use <b>CSS 3D Transformations</b>:
+    </p>
+
+    <div class="exampleCode live" >
+        <xml3d class="example">
+          <view position="0 0 100" ></view>
+          ====MARK
+          <group style="transform: translate3d(0px,-20px, 0px)" >
+          ====
+            <mesh src="resource/teapot.xml#mesh" ></mesh>
+          ====MARK
+          </group>
+          ====
+        </xml3d>
+    </div>
+
+    <p>
+        There's our teapot! Well, at least its silhouette.
+    </p>
+
+  </div>
+</div>
+</body>
+</html>
